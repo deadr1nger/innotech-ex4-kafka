@@ -1,0 +1,26 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+    <changeSet id="metrics" author="deadringer">
+        <createTable tableName="metrics">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="system_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="metrics" type="jsonb">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <createIndex tableName="metrics" indexName="system_name_index">
+            <column name="system_name"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

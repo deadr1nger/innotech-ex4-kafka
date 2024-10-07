@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: "kafka-producer-service"
+  kafka:
+    bootstrap-servers: "127.0.0.1:29092"
+    topic: "metrics-topic"
+
+management:
+  health:
+    show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, prometheus
+    endpoint:
+      prometheus:
+        enabled: true
+      health:
+        enabled: true
+
+logging:
+  level:
+    root: info
+    org:
+      hibernate:
+        type: info

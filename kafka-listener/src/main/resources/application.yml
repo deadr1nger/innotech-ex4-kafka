@@ -1,0 +1,31 @@
+spring:
+  kafka:
+    bootstrap-servers: "127.0.0.1:29092"
+    consumer:
+      group-id: "consumergroupid"
+      max-partition: 100000
+      max-bytes: 1000000
+    topic: "metrics-topic"
+  datasource:
+    url: jdbc:postgresql://localhost:5432/innotech
+    driverClassName: org.postgresql.Driver
+    username: postgres
+    password: 1234
+    jpa:
+      hibernate:
+        ddl-auto: none
+      show-sql: true
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
+  hibernate:
+    dialect: "org.hibernate.dialect.PostgreSQLDialect"
+server:
+   port: 8081
+
+logging:
+  level:
+    root: info
+    org:
+      hibernate:
+        type: info
