@@ -4,7 +4,8 @@ spring:
   kafka:
     bootstrap-servers: "127.0.0.1:29092"
     topic: "metrics-topic"
-
+scheduler:
+  fixed-rate: 5000
 management:
   health:
     show-details: always

@@ -25,7 +25,7 @@ public class MetricSendConfiguration {
     @Value("${spring.application.name}")
     public String systemName;
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRateString = "${scheduler.fixed-rate}")
     public void send() {
         MetricDto metricDto = getMetrics();
         kafkaTemplate.send(topic, metricDto);

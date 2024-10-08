@@ -4,7 +4,8 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     topic: ${KAFKA_TOPIC}
-
+scheduler:
+  fixed-rate: ${SCHEDULE_TIME:5000}
 management:
   health:
     show-details: always

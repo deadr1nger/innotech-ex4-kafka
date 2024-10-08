@@ -1,8 +1,8 @@
 spring:
   application:
-    name: ${APP_NAME:kafka-consumer-service} # Значение по умолчанию
+    name: ${APP_NAME:kafka-consumer-service}
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:127.0.0.1:29092} # Значение по умолчанию
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:127.0.0.1:29092}
     consumer:
       group-id: ${KAFKA_CONSUMER_GROUP_ID}
       max-partition: ${KAFKA_CONSUMER_MAX_PARTITION}
