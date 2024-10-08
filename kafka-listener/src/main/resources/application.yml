@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: "kafka-consumer-service"
   kafka:
     bootstrap-servers: "127.0.0.1:29092"
     consumer:

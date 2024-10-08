@@ -1,4 +1,5 @@
 package ru.innotech.producer.configuration;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -22,6 +23,7 @@ import java.util.Map;
 
 import static org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.*;
+
 @Slf4j
 @Configuration
 @EnableKafka
@@ -49,7 +51,6 @@ public class KafkaProducerConfiguration {
     private ProducerFactory<String, MetricDto> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
-
 
 
     @Bean

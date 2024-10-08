@@ -1,8 +1,6 @@
 package ru.innotech.consumer.service;
 
-import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -20,9 +18,10 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class MetricSearchServiceImpl<T> implements MetricSearchService{
+public class MetricSearchServiceImpl implements MetricSearchService {
     private final MetricRepository metricRepository;
     private final MetricMapper metricMapper;
+
     @Override
     public MetricDto searchMetric(UUID id) {
         return metricRepository.findById(id).map(metricMapper::entityToMetricDTO).orElseThrow(() -> new IllegalArgumentException("Metric not found"));
@@ -40,16 +39,23 @@ public class MetricSearchServiceImpl<T> implements MetricSearchService{
         }
         Specification<MetricEntity> spec = (root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            dtos.stream().forEach(filterDto -> {
-                if (filterDto.getOperator().equals("eq"))
-                    predicates.add(builder.equal(setPath((Root<T>) root, filterDto.getKey()), filterDto.getValue()));
-                if (filterDto.getOperator().equals("uuid"))
-                    predicates.add(builder.equal(setPath((Root<T>) root, filterDto.getKey()), UUID.fromString(filterDto.getValue())));
-                if (filterDto.getOperator().equals("gt"))
-                    predicates.add(builder.gt(setPath((Root<T>) root, filterDto.getKey()), Double.parseDouble(filterDto.getValue())));
-                if (filterDto.getOperator().equals("lt"))
-                    predicates.add(builder.lt(setPath((Root<T>) root, filterDto.getKey()), Double.parseDouble(filterDto.getValue())));
-
+            dtos.forEach(filterDto -> {
+                switch (filterDto.getOperator()) {
+                    case "eq":
+                        predicates.add(builder.equal(root.get(filterDto.getKey()), filterDto.getValue()));
+                        break;
+                    case "uuid":
+                        predicates.add(builder.equal(root.get(filterDto.getKey()), UUID.fromString(filterDto.getValue())));
+                        break;
+                    case "gt":
+                        predicates.add(builder.gt(root.get(filterDto.getKey()), Double.parseDouble(filterDto.getValue())));
+                        break;
+                    case "lt":
+                        predicates.add(builder.lt(root.get(filterDto.getKey()), Double.parseDouble(filterDto.getValue())));
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unknown operator: " + filterDto.getOperator());
+                }
             });
             if (predicates.isEmpty()) {
                 throw new IllegalArgumentException("Predicates not found");
@@ -60,18 +66,5 @@ public class MetricSearchServiceImpl<T> implements MetricSearchService{
         return metricRepository.findAll(spec)
                 .stream()
                 .map(metricMapper::entityToMetricDTO).collect(Collectors.toSet());
-
-    }
-
-
-    private Path setPath(Root<T> root, String key) {
-        String[] path = key.split(":");
-        Path currentPath = root;
-
-        for (String pathElement : path) {
-            currentPath = currentPath.get(pathElement);
-        }
-
-        return currentPath;
     }
 }

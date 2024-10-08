@@ -9,7 +9,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import ru.innotech.producer.model.dto.MetricDto;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,15 +24,17 @@ public class MetricSendConfiguration {
     private String topic;
     @Value("${spring.application.name}")
     public String systemName;
+
     @Scheduled(fixedRate = 5000)
     public void send() {
         MetricDto metricDto = getMetrics();
         kafkaTemplate.send(topic, metricDto);
     }
+
     public MetricDto getMetrics() {
         Map<String, Double> metricsMap = new HashMap<>();
         metricsEndpoint.listNames().getNames().forEach(metricName -> metricsEndpoint.metric(metricName, null).getMeasurements().forEach(measurement ->
-            metricsMap.put(metricName + "." + measurement.getStatistic().name(), measurement.getValue())));
+                metricsMap.put(metricName + "." + measurement.getStatistic().name(), measurement.getValue())));
         return new MetricDto(UUID.randomUUID(), systemName, LocalDateTime.now(), metricsMap);
     }
 }

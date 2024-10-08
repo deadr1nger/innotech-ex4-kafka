@@ -9,10 +9,10 @@ import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
+
 @Entity
 @Table(name = "metrics")
 @Getter
@@ -22,7 +22,8 @@ public class MetricEntity {
     UUID id;
     @Column(name = "system_name")
     String systemName;
-    LocalDateTime date;
+    @Column(name = "timestamp")
+    LocalDateTime timeStamp;
     @JdbcTypeCode(SqlTypes.JSON)
     Map<String, Double> metrics;
 }

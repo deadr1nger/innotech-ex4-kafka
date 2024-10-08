@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ru.innotech</groupId>
 	<artifactId>kafka-produce</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>kafka-produce</name>
 	<description>innotech-kafka-produce</description>
 	<url/>
@@ -75,5 +75,20 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<spring.config.location>classpath:/application.yml</spring.config.location>
+			</properties>
+		</profile>
+		<profile>
+			<id>docker</id>
+			<properties>
+				<spring.config.location>classpath:/application-docker.yml</spring.config.location>
+			</properties>
+		</profile>
+	</profiles>
 
 </project>

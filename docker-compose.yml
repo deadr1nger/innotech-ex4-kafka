@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  produce-app:
+    image: producer-service:latest
+    depends_on:
+      - zookeeper
+      - kafka
+      - db
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092 # Используем внутренний адрес Kafka
+      - KAFKA_TOPIC=${KAFKA_TOPIC}
+      - LOGGING_LEVEL_ROOT=${LOGGING_LEVEL_ROOT}
+      - LOGGING_LEVEL_HIBERNATE_TYPE=${LOGGING_LEVEL_HIBERNATE_TYPE}
+    ports:
+      - ${PRODUCE_SERVICE_SERVER_PORT}:8080
+    env_file:
+      - .env
+    networks:
+      - common
+
+  consume-app:
+    image: listener-service:latest
+    depends_on:
+      - zookeeper
+      - kafka
+      - db
+      - produce-app
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092 # Используем внутренний адрес Kafka
+      - KAFKA_CONSUMER_GROUP_ID=${KAFKA_CONSUMER_GROUP_ID}
+      - KAFKA_CONSUMER_MAX_PARTITION=${KAFKA_CONSUMER_MAX_PARTITION}
+      - KAFKA_CONSUMER_MAX_BYTES=${KAFKA_CONSUMER_MAX_BYTES}
+      - KAFKA_TOPIC=${KAFKA_TOPIC}
+      - DB_URL=${DB_URL}
+      - DB_DRIVER=${DB_DRIVER}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - HIBERNATE_DDL_AUTO=${HIBERNATE_DDL_AUTO}
+      - JPA_SHOW_SQL=${JPA_SHOW_SQL}
+      - HIBERNATE_DIALECT=${HIBERNATE_DIALECT}
+      - LIQUIBASE_ENABLED=${LIQUIBASE_ENABLED}
+      - LIQUIBASE_CHANGE_LOG=${LIQUIBASE_CHANGE_LOG}
+      - LOGGING_LEVEL_ROOT=${LOGGING_LEVEL_ROOT}
+      - LOGGING_LEVEL_HIBERNATE_TYPE=${LOGGING_LEVEL_HIBERNATE_TYPE}
+    ports:
+      - ${CONSUME_SERVICE_SERVER_PORT}:8080
+    env_file:
+      - .env
+    networks:
+      - common
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - ${DB_PORT}:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - common
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: ${ZOOKEEPER_CLIENT_PORT}
+      ZOOKEEPER_TICK_TIME: ${ZOOKEEPER_TICK_TIME}
+    ports:
+      - ${ZOOKEEPER_CLIENT_PORT}:${ZOOKEEPER_CLIENT_PORT}
+    networks:
+      - common
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - ${KAFKA_PORT}:29092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:${ZOOKEEPER_CLIENT_PORT}
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://host.docker.internal:29092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - common
+
+networks:
+  common:
+
+volumes:
+  db-data:

@@ -14,10 +14,11 @@ import ru.innotech.consumer.repository.MetricRepository;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class MetricServiceImpl implements MetricService{
+public class MetricServiceImpl implements MetricService {
     private final MetricRepository metricRepository;
     private final ObjectMapper objectMapper;
     private final MetricMapper metricMapper;
+
     @Override
     @KafkaListener(topics = "${spring.kafka.topic}")
     public void saveMetric(@Payload String message) {

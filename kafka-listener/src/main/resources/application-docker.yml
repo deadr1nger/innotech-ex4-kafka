@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: ${APP_NAME:kafka-consumer-service} # Значение по умолчанию
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:127.0.0.1:29092} # Значение по умолчанию
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP_ID}
+      max-partition: ${KAFKA_CONSUMER_MAX_PARTITION}
+      max-bytes: ${KAFKA_CONSUMER_MAX_BYTES}
+    topic: ${KAFKA_TOPIC:metrics-topic}
+  datasource:
+    url: ${DB_URL}
+    driverClassName: ${DB_DRIVER}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    jpa:
+      hibernate:
+        ddl-auto: ${HIBERNATE_DDL_AUTO}
+      show-sql: ${JPA_SHOW_SQL}
+  liquibase:
+    enabled: ${LIQUIBASE_ENABLED:true}
+    change-log: ${LIQUIBASE_CHANGE_LOG:classpath:db/changelog/db.changelog-master.xml}
+  hibernate:
+    dialect: ${HIBERNATE_DIALECT}
+server:
+  port: ${SERVER_PORT}
+
+logging:
+  level:
+    root: ${LOGGING_LEVEL_ROOT:info}
+    org:
+      hibernate:
+        type: ${LOGGING_LEVEL_HIBERNATE_TYPE:info}
