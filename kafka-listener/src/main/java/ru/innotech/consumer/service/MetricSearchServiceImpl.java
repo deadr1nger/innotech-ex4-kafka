@@ -4,6 +4,7 @@ import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.innotech.consumer.model.dto.MetricDto;
 import ru.innotech.consumer.model.dto.MetricSearchDto;
 import ru.innotech.consumer.model.entity.MetricEntity;
@@ -23,16 +24,19 @@ public class MetricSearchServiceImpl implements MetricSearchService {
     private final MetricMapper metricMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public MetricDto searchMetric(UUID id) {
         return metricRepository.findById(id).map(metricMapper::entityToMetricDTO).orElseThrow(() -> new IllegalArgumentException("Metric not found"));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Set<MetricDto> findAllMetrics() {
         return metricRepository.findAll().stream().map(metricMapper::entityToMetricDTO).collect(Collectors.toSet());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Set<MetricDto> searchMetricsByFilter(List<MetricSearchDto> dtos) {
         if (dtos.isEmpty()) {
             throw new IllegalArgumentException("Predicates cannot be null");

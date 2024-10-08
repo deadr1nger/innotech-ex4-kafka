@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.innotech.consumer.model.dto.MetricDto;
 import ru.innotech.consumer.model.mapper.MetricMapper;
 import ru.innotech.consumer.repository.MetricRepository;
@@ -21,6 +22,7 @@ public class MetricServiceImpl implements MetricService {
 
     @Override
     @KafkaListener(topics = "${spring.kafka.topic}")
+    @Transactional
     public void saveMetric(@Payload String message) {
         try {
             MetricDto convertedDto = objectMapper.readValue(message, MetricDto.class);
